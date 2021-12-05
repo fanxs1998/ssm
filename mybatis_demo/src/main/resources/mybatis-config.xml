@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--
+        1、mybatis可以使用properties来引入外部properties配置文件的内容
+        resource：引入类路径下的资源
+        url：引入网络路径或者磁盘路径下的资源
+    -->
+    <!--引入数据库连接的配置文件-->
+    <properties resource="jdbc.properties"/>
+    
+
+    
+    <settings>
+        <!--开启驼峰命名-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="mapper/EmployeeMapper.xml"/>
+        <mapper resource="mapper/EmployeeMapperPlus.xml"/>
+        <mapper resource="mapper/DepartmentMapper.xml"/>
+        <mapper class="com.code.dao.EmployeeMapperAnnotation"/>
+    </mappers>
+</configuration>

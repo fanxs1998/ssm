@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="DB2Tables" targetRuntime="MyBatis3Simple">
+        <!--jdbcConnection 指定如何连接到目标数据库-->
+        <jdbcConnection connectionURL="jdbc:mysql://localhost:3306/ssm_test?serverTimezone=Asia/Shanghai"
+                        driverClass="com.mysql.cj.jdbc.Driver" password="root" userId="fanxs98x" >
+        </jdbcConnection>
+
+        <!--是否强制转换BigDecimal-->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!--
+            javaModelGenerator：指定JavaBean的生成策略
+            targetPackage="com.code.bean":生成目标包名
+            targetProject=".\src":目标工程
+        -->
+        <javaModelGenerator targetPackage="com.code.bean" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+            <!-- 从数据库返回的值被清理前后的空格  -->
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!--sqlMapGenerator：sql映射生成策略-->
+        <sqlMapGenerator targetPackage="mybatis.mapper" targetProject=".\src\main\resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!--javaClientGenerator:指定mapper接口所在的位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.code.dao" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--数据库表
+            domainObjectName:生成的类的名字
+            -->
+        <table tableName="tbl_dept" domainObjectName="dept"
+               enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false" >
+            <property name="useActualColumnNames" value="false"/>
+        </table>
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.code.dao.EmployeeDynamicSqlMapper">
+
+
+    <!--
+        if
+        choose(when, otherwise)
+        trim(where, set)
+        foreach
+    -->
+    <!--mysql批量保存1 values (), ()-->
+<!--    <insert id="addEmps">
+        insert into tbl_employee(last_name, email, gender, dept_id)
+        values
+        <foreach collection="emps" item="emp" separator=",">
+            (#{emp.lastName}, #{emp.email}, #{emp.gender}, #{emp.deptId})
+        </foreach>
+    </insert>-->
+
+    <!--mysql批量保存2 jdbc配置连接属性 allowMultiQueries=true-->
+    <insert id="addEmps">
+        <foreach collection="emps" item="emp" separator=";">
+            insert into tbl_employee(last_name, email, gender, dept_id)
+            values (#{emp.lastName}, #{emp.email}, #{emp.gender}, #{emp.deptId})
+        </foreach>
+    </insert>
+
+
+    <!--oracle 第一种 ： 多个insert语句放在 begin - end 里面-->
+<!--    <insert id="addEmps">
+        <foreach collection="emps" item="emp" open="begin" close="end;">
+            insert into tbl_employee(id, last_name, email, gender, dept_id)
+            values (employees_seq.nextval, #{emp.lastName}, #{emp.email}, #{emp.gender}, #{emp.deptId});
+        </foreach>
+    </insert>-->
+    <!--oracle 第二种 ： 利用中间表-->
+<!--    <insert id="addEmps">
+        insert into tbl_employee(id, last_name, email)
+            select employees_seq.nextval, lastName, email from (
+                <foreach collection="emps" item="emp" separator="union">
+                    select #{emp.lastName} lastName, #{emp.email} email from dual
+                </foreach>
+            )
+    </insert>-->
+
+    <update id="updateEmp">
+        update tbl_employee
+        <set>
+            <if test="lastName != null">
+                and last_name like #{lastName}
+            </if>
+            <if test="email != null">
+                and email = #{email}
+            </if>
+            <if test="gender != null">
+                and gender = #{gender}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getEmpByConditionIf" resultType="com.code.bean.Employee">
+        select * from tbl_employee
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="lastName != null and lastName != '' ">
+                and last_name like #{lastName}
+            </if>
+            <if test="email != null and email.trim() != '' ">
+                and email = #{email}
+            </if>
+            <if test="gender == 0 or gender == 1 ">
+                and gender = #{gender}
+            </if>
+        </where>
+
+    </select>
+    <select id="getEmpByConditionTrim" resultType="com.code.bean.Employee">
+        select * from tbl_employee
+        <trim prefix="where" suffixOverrides="and">
+            <if test="id != null">
+                id = #{id} and
+            </if>
+            <if test="lastName != null and lastName != '' ">
+                last_name like #{lastName} and
+            </if>
+            <if test="email != null and email.trim() != '' ">
+                email = #{email} and
+            </if>
+            <if test="gender == 0 or gender == 1 ">
+                gender = #{gender}
+            </if>
+        </trim>
+    </select>
+    <select id="getEmpByConditionChoose" resultType="com.code.bean.Employee">
+        select * from tbl_employee
+        <where>
+            <!--如果带了id就用id查，带了lastName就用lastName，只会进入其中一个-->
+            <choose>
+                <when test="id!=null">
+                    id = #{id}
+                </when>
+                <when test="lastName!=null">
+                    last_name like #{lastName}
+                </when>
+                <when test="id!=null">
+                    email = #{email}
+                </when>
+                <otherwise>
+                    gender = 0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+    <!--
+        collection:指定要遍历的集合
+        list类型的参数会特殊处理封装在map中，map的key就叫list
+        separator:每个元素之间的分割符
+        open:遍历出所有结果拼接一个开始的字符
+        close:遍历出的结果拼接一个结束的字符
+        index:遍历list的时候index是索引，item就是当前值
+                遍历map的时候index是map的key，item是map的值
+    -->
+    <select id="getEmpByConditionForeach" resultType="com.code.bean.Employee">
+        select * from tbl_employee
+        <foreach collection="ids" item="item_id" separator="," open="where id in(" close=")">
+            #{item_id}
+        </foreach>
+    </select>
+    
+    
+    <sql id="all_column">
+        id, last_name, email, gender, dept_id
+    </sql>
+<!--    <select id="getEmpById" resultType="com.code.bean.Emp">
+        select
+            <include refid="all_column" />
+        from tbl_employee
+        where id = #{id}
+    </select>-->
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--引入数据库连接的配置文件-->
+    <properties resource="jdbc.properties"/>
+
+
+    
+    <settings>
+        <!--开启驼峰命名-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+
+        <!--开启二级缓存-->
+        <setting name="cacheEnabled" value="true"/>
+
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <typeHandlers>
+<!--        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler"
+                     javaType="com.code.bean.EmpStatus"></typeHandler>-->
+        <!--配置自定义类型处理器-->
+        <typeHandler handler="com.code.MyEnumTypeHandler" javaType="com.code.bean.EmpStatus"></typeHandler>
+    </typeHandlers>
+    <!--注册插件-->
+    <plugins>
+        <plugin interceptor="com.code.MyFirstPlugin">
+            <property name="username" value="fanxs"/>
+            <property name="pwd" value="123"/>
+        </plugin>
+    </plugins>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="mapper/PluginEmpMapper.xml"/>
+    </mappers>
+</configuration>

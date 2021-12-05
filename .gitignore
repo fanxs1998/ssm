@@ -1,0 +1,6 @@
+# Project exclude paths
+/mybatis_demo/target/
+/mybatis_dynamic/target/
+/mybatis_pageHelper/target/
+/mybatis_plugin/target/
+/mybatis_ssm/target/
